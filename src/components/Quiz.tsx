@@ -14,6 +14,10 @@ import {
   Award,
   BookOpen,
   Mic,
+  Maximize2,
+  Minimize2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import {
   doc,
@@ -75,6 +79,18 @@ const Quiz: React.FC<QuizProps> = ({ surah, ayahs, mode, onFinish }) => {
   const [blankWord, setBlankWord] = useState('');
   const [displayAyah, setDisplayAyah] = useState('');
   const [showVoicePractice, setShowVoicePractice] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+
+  // Keyboard shortcut (Escape key) to toggle or exit Focus Mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFocusMode) {
+        setIsFocusMode(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFocusMode]);
 
   const handleVoiceFeedbackComplete = (accuracy: number, isPassed: boolean) => {
     if (selectedOption || !currentAyah) return;
@@ -467,9 +483,15 @@ const Quiz: React.FC<QuizProps> = ({ surah, ayahs, mode, onFinish }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6 transition-colors duration-200">
-      {/* SRS Prioritization Banner */}
-      {prioritizedCount > 0 && (
+    <div
+      className={
+        isFocusMode
+          ? 'fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl text-slate-100 p-4 sm:p-8 overflow-y-auto flex flex-col justify-between space-y-6 transition-all duration-300'
+          : 'max-w-4xl mx-auto p-4 space-y-6 transition-colors duration-200'
+      }
+    >
+      {/* SRS Prioritization Banner (Hidden in Focus Mode) */}
+      {!isFocusMode && prioritizedCount > 0 && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -486,27 +508,69 @@ const Quiz: React.FC<QuizProps> = ({ surah, ayahs, mode, onFinish }) => {
       )}
 
       {/* Quiz Top Header */}
-      <div className="flex justify-between items-center flex-wrap gap-2">
+      <div className="flex justify-between items-center flex-wrap gap-3">
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="text-xl font-bold text-emerald-900 dark:text-emerald-400">
+            <h2
+              className={
+                isFocusMode
+                  ? 'text-2xl font-black text-amber-200 tracking-wide'
+                  : 'text-xl font-bold text-emerald-900 dark:text-emerald-400'
+              }
+            >
               {language === 'ar' ? surah.name : surah.englishName}
             </h2>
-            {renderSRSStatusBadge(currentItem.srsStatus)}
+            {!isFocusMode && renderSRSStatusBadge(currentItem.srsStatus)}
+            {isFocusMode && (
+              <span className="px-2.5 py-0.5 bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                Focus Mode Active
+              </span>
+            )}
           </div>
-          <p className="text-sm text-gray-500 dark:text-slate-400">
+          <p
+            className={
+              isFocusMode
+                ? 'text-xs text-slate-400 font-medium'
+                : 'text-sm text-gray-500 dark:text-slate-400'
+            }
+          >
             {t('ayah')} {currentAyah.numberInSurah} {t('of')} {surah.numberOfAyahs}
           </p>
         </div>
 
-        <div className="flex gap-4 text-sm font-bold">
-          <span className="text-emerald-600 dark:text-emerald-400">✓ {correctCount}</span>
-          <span className="text-red-500 dark:text-red-400">✗ {mistakeCount}</span>
+        <div className="flex items-center gap-4">
+          <div className="flex gap-3 text-sm font-bold">
+            <span className="text-emerald-400">✓ {correctCount}</span>
+            <span className="text-red-400">✗ {mistakeCount}</span>
+          </div>
+
+          {/* Focus Mode Toggle Button */}
+          <button
+            onClick={() => setIsFocusMode((prev) => !prev)}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
+              isFocusMode
+                ? 'bg-amber-400 text-amber-950 hover:bg-amber-300 ring-2 ring-amber-300/50'
+                : 'bg-emerald-50 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-slate-700 border border-emerald-200 dark:border-slate-700'
+            }`}
+            title={isFocusMode ? t('exitFocusMode') : t('focusMode')}
+          >
+            {isFocusMode ? (
+              <>
+                <Minimize2 className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('exitFocusMode')}</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span className="hidden sm:inline">{t('focusMode')}</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-gray-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+      <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
         <motion.div
           className="bg-emerald-500 h-full"
           initial={{ width: 0 }}
@@ -519,12 +583,16 @@ const Quiz: React.FC<QuizProps> = ({ surah, ayahs, mode, onFinish }) => {
       {/* Question Card */}
       <motion.div
         key={currentIndex}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-emerald-50 dark:border-slate-800 space-y-8"
+        initial={{ opacity: 0, scale: isFocusMode ? 0.98 : 1 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className={
+          isFocusMode
+            ? 'bg-slate-900/90 border border-emerald-900/60 p-8 sm:p-12 rounded-3xl shadow-2xl space-y-8 max-w-3xl mx-auto w-full'
+            : 'bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-emerald-50 dark:border-slate-800 space-y-8'
+        }
       >
         <div className="text-center space-y-6">
-          <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+          <p className="text-sm font-medium text-emerald-400 uppercase tracking-wider">
             {mode === 'next-ayah'
               ? t('whatComesNext')
               : mode === 'fill-blank'
@@ -533,7 +601,11 @@ const Quiz: React.FC<QuizProps> = ({ surah, ayahs, mode, onFinish }) => {
           </p>
 
           <div
-            className="font-arabic text-4xl leading-relaxed text-emerald-900 dark:text-emerald-300 text-right rtl:text-right transition-colors"
+            className={
+              isFocusMode
+                ? 'font-arabic text-4xl sm:text-5xl md:text-6xl leading-relaxed text-amber-100 text-right rtl:text-right transition-colors drop-shadow-md py-4'
+                : 'font-arabic text-4xl leading-relaxed text-emerald-900 dark:text-emerald-300 text-right rtl:text-right transition-colors'
+            }
             dir="rtl"
           >
             {mode === 'next-ayah' ? currentAyah.text : mode === 'fill-blank' ? displayAyah : currentAyah.text}

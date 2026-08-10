@@ -17,6 +17,8 @@ import { Achievements } from './Achievements';
 import { SocialShareModal } from './SocialShareModal';
 import { DailyMemorizationGoal } from './DailyMemorizationGoal';
 import { StreakCounter } from './StreakCounter';
+import { WeeklyProgressReport } from './WeeklyProgressReport';
+import { MemorizationPlans } from './MemorizationPlans';
 
 const CircularProgressRing: React.FC<{
   current: number;
@@ -291,6 +293,21 @@ const Dashboard: React.FC = () => {
         />
       </div>
 
+      {/* Suggested Memorization Plans Section */}
+      <MemorizationPlans
+        currentDailyGoal={dailyGoal}
+        onSelectPlanGoal={(newGoal) => {
+          setDailyGoal(newGoal);
+          setGoalInput(newGoal.toString());
+          localStorage.setItem('hafiz_daily_goal', newGoal.toString());
+          if (user) {
+            updateDoc(doc(db, 'users', user.uid), { dailyGoal: newGoal }).catch(
+              console.error
+            );
+          }
+        }}
+      />
+
       {/* SRS Spaced Repetition Summary Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -370,82 +387,8 @@ const Dashboard: React.FC = () => {
         )}
       </motion.div>
 
-      {/* 7-Day Daily Memorized Ayah Trend Line Chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-sm border border-emerald-50 dark:border-slate-800 space-y-6"
-      >
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-emerald-100 dark:bg-emerald-950/80 rounded-2xl text-emerald-700 dark:text-emerald-400">
-              <TrendingUp className="w-6 h-6" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-emerald-900 dark:text-emerald-400">
-                {t('dailyTrendTitle')}
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-slate-400">
-                {t('dailyTrendSubtitle')}
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-emerald-50 dark:bg-slate-800/80 px-4 py-2 rounded-2xl border border-emerald-100 dark:border-slate-700 flex items-center gap-3">
-            <div>
-              <span className="text-xs text-gray-500 dark:text-slate-400 font-medium block">
-                7-Day Total
-              </span>
-              <span className="text-lg font-bold text-emerald-800 dark:text-emerald-300">
-                {total7DaysAyat} {t('ayat')}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="h-72 w-full pt-2">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={dailyTrendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} allowDecimals={false} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f172a', 
-                  color: '#fff', 
-                  borderRadius: '16px', 
-                  border: 'none', 
-                  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
-                }}
-                formatter={(value: any, name: string) => [
-                  value, 
-                  name === 'ayat' ? t('memorizedAyat') : t('dailyTarget')
-                ]}
-              />
-              <Legend 
-                formatter={(value) => value === 'ayat' ? t('memorizedAyat') : t('dailyTarget')}
-                wrapperStyle={{ paddingTop: '10px' }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="ayat" 
-                stroke="#10b981" 
-                strokeWidth={3.5} 
-                dot={{ fill: '#059669', r: 5, strokeWidth: 2, stroke: '#ffffff' }}
-                activeDot={{ r: 8, fill: '#047857' }} 
-              />
-              <Line 
-                type="monotone" 
-                dataKey="target" 
-                stroke="#f59e0b" 
-                strokeWidth={2} 
-                strokeDasharray="5 5" 
-                dot={false} 
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </motion.div>
+      {/* Weekly Progress Report Component using Recharts */}
+      <WeeklyProgressReport last7Days={last7Days} dailyGoal={dailyGoal} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <motion.div

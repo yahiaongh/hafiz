@@ -48,3 +48,89 @@ export function calculateNextSRS(
     nextReview: nextDate.toISOString(),
   };
 }
+
+export type AyahSRSStatus = 'due' | 'weak' | 'learning' | 'mastered' | 'new';
+
+export interface SRSPriorityResult {
+  priorityScore: number;
+  status: AyahSRSStatus;
+  daysUntilReview: number;
+}
+
+/**
+ * Calculates a priority score for ordering Ayah review questions in quizzes.
+ * Higher priority score means the Ayah segment should be tested earlier.
+ */
+export function calculateSRSPriority(
+  progress?: {
+    correctCount?: number;
+    mistakeCount?: number;
+    interval?: number;
+    repetition?: number;
+    easeFactor?: number;
+    nextReview?: string;
+    lastAttempt?: string;
+  }
+): SRSPriorityResult {
+  if (!progress) {
+    return { priorityScore: 50, status: 'new', daysUntilReview: 0 };
+  }
+
+  const mistakes = progress.mistakeCount || 0;
+  const correct = progress.correctCount || 0;
+  const easeFactor = progress.easeFactor ?? 2.5;
+  const repetition = progress.repetition ?? 0;
+  const interval = progress.interval ?? 0;
+  const now = new Date();
+
+  let daysUntilReview = 0;
+  if (progress.nextReview) {
+    const nextDate = new Date(progress.nextReview);
+    const diffTime = nextDate.getTime() - now.getTime();
+    daysUntilReview = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  const isDue = daysUntilReview <= 0 && !!progress.nextReview;
+
+  const totalAttempts = mistakes + correct;
+  const mistakeRate = totalAttempts > 0 ? mistakes / totalAttempts : 0;
+  const isWeak = mistakes > 0 && (mistakeRate >= 0.25 || easeFactor < 2.2 || repetition === 0);
+
+  let priorityScore = 0;
+
+  if (isDue) {
+    priorityScore += 1000 + Math.abs(daysUntilReview) * 50; // Overdue items get top priority
+  }
+
+  if (isWeak) {
+    priorityScore += 500 + Math.round(mistakeRate * 400); // Weak segments get high priority
+  }
+
+  // Factor in low ease factor
+  priorityScore += Math.round((3.5 - easeFactor) * 120);
+
+  // Factor in low repetition
+  if (repetition === 0) priorityScore += 150;
+  else if (repetition < 3) priorityScore += 60;
+
+  let status: AyahSRSStatus = 'learning';
+
+  if (isDue) {
+    status = 'due';
+  } else if (isWeak) {
+    status = 'weak';
+  } else if (repetition >= 4 && interval >= 7) {
+    status = 'mastered';
+    priorityScore -= 200;
+  } else if (totalAttempts === 0) {
+    status = 'new';
+  } else {
+    status = 'learning';
+  }
+
+  return {
+    priorityScore,
+    status,
+    daysUntilReview,
+  };
+}

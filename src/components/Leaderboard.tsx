@@ -44,25 +44,25 @@ export const Leaderboard: React.FC = () => {
     switch (rank) {
       case 1:
         return (
-          <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold shadow-inner">
+          <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold shadow-inner">
             <Crown className="w-5 h-5 text-amber-500 fill-amber-400" />
           </div>
         );
       case 2:
         return (
-          <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold">
+          <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold">
             <Medal className="w-5 h-5 text-slate-400 fill-slate-300" />
           </div>
         );
       case 3:
         return (
-          <div className="w-8 h-8 rounded-full bg-amber-700/10 text-amber-800 flex items-center justify-center font-bold">
-            <Medal className="w-5 h-5 text-amber-700 fill-amber-600" />
+          <div className="w-8 h-8 rounded-full bg-amber-700/10 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 flex items-center justify-center font-bold">
+            <Medal className="w-5 h-5 text-amber-700 dark:text-amber-500 fill-amber-600" />
           </div>
         );
       default:
         return (
-          <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center font-semibold text-xs">
+          <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 flex items-center justify-center font-semibold text-xs">
             #{rank}
           </div>
         );
@@ -70,24 +70,24 @@ export const Leaderboard: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl shadow-sm border border-emerald-50 space-y-6">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-emerald-50 dark:border-slate-800 space-y-6 transition-colors duration-200">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <Trophy className="w-6 h-6 text-amber-500" />
-            <h2 className="text-xl font-bold text-emerald-900">{t('globalLeaderboard')}</h2>
+            <h2 className="text-xl font-bold text-emerald-900 dark:text-emerald-400">{t('globalLeaderboard')}</h2>
           </div>
-          <p className="text-xs text-gray-500 mt-1">{t('leaderboardDesc')}</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{t('leaderboardDesc')}</p>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex bg-gray-100 p-1 rounded-2xl w-fit">
+        <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-2xl w-fit">
           <button
             onClick={() => setTab('total')}
             className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
               tab === 'total'
-                ? 'bg-white text-emerald-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'bg-white dark:bg-slate-700 text-emerald-900 dark:text-emerald-300 shadow-sm'
+                : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
             }`}
           >
             <Star className="w-3.5 h-3.5 text-amber-500" />
@@ -97,8 +97,8 @@ export const Leaderboard: React.FC = () => {
             onClick={() => setTab('streak')}
             className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
               tab === 'streak'
-                ? 'bg-white text-emerald-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'bg-white dark:bg-slate-700 text-emerald-900 dark:text-emerald-300 shadow-sm'
+                : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
             }`}
           >
             <Flame className="w-3.5 h-3.5 text-orange-500" />
@@ -109,10 +109,10 @@ export const Leaderboard: React.FC = () => {
 
       {loading ? (
         <div className="py-12 flex justify-center items-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 dark:border-emerald-400"></div>
         </div>
       ) : topUsers.length === 0 ? (
-        <div className="text-center py-12 text-gray-400 text-sm">
+        <div className="text-center py-12 text-gray-400 dark:text-slate-500 text-sm">
           No users on the leaderboard yet.
         </div>
       ) : (
@@ -129,10 +129,10 @@ export const Leaderboard: React.FC = () => {
                 transition={{ delay: index * 0.04 }}
                 className={`flex items-center justify-between p-3.5 rounded-2xl transition-all border ${
                   isCurrentUser
-                    ? 'bg-emerald-50/80 border-emerald-300 ring-1 ring-emerald-400'
+                    ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 ring-1 ring-emerald-400'
                     : rank === 1
-                    ? 'bg-amber-50/50 border-amber-200'
-                    : 'bg-white border-gray-100 hover:border-emerald-100'
+                    ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/40'
+                    : 'bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800/80 hover:border-emerald-100 dark:hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center gap-3.5 min-w-0">
@@ -142,37 +142,37 @@ export const Leaderboard: React.FC = () => {
                     <img
                       src={u.photoURL}
                       alt={u.displayName || 'User'}
-                      className="w-10 h-10 rounded-full object-cover border border-emerald-200"
+                      className="w-10 h-10 rounded-full object-cover border border-emerald-200 dark:border-slate-700"
                       referrerPolicy="no-referrer"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-slate-800 text-emerald-800 dark:text-emerald-300 flex items-center justify-center font-bold text-sm">
                       <UserIcon className="w-5 h-5" />
                     </div>
                   )}
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="font-bold text-emerald-900 truncate text-sm">
+                      <p className="font-bold text-emerald-900 dark:text-slate-100 truncate text-sm">
                         {u.displayName || u.email?.split('@')[0] || 'Anonymous'}
                       </p>
                       {isCurrentUser && (
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-600 text-white rounded-full uppercase tracking-wider">
+                        <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-600 dark:bg-emerald-500 text-white rounded-full uppercase tracking-wider">
                           {t('you')}
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-gray-400 truncate">
+                    <p className="text-[11px] text-gray-400 dark:text-slate-400 truncate">
                       {u.streak || 0} {t('streakDays')} • {u.totalCorrect || 0} {t('ayat')}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right rtl:text-left pl-3 rtl:pl-0 rtl:pr-3">
-                  <p className="font-black text-emerald-800 text-base">
+                  <p className="font-black text-emerald-800 dark:text-emerald-400 text-base">
                     {tab === 'total' ? (u.totalCorrect || 0) : (u.streak || 0)}
                   </p>
-                  <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
+                  <p className="text-[10px] text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wider">
                     {tab === 'total' ? t('ayat') : t('days')}
                   </p>
                 </div>

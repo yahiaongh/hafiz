@@ -59,13 +59,13 @@ const SurahSelector: React.FC<SurahSelectorProps> = ({ onSelect }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 dark:border-emerald-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4 transition-colors duration-200">
       {!selectedSurah ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -73,16 +73,16 @@ const SurahSelector: React.FC<SurahSelectorProps> = ({ onSelect }) => {
           className="space-y-6"
         >
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-emerald-900">{t('chooseSurah')}</h1>
-            <p className="text-gray-500">{t('chooseSurahSubtitle')}</p>
+            <h1 className="text-3xl font-bold text-emerald-900 dark:text-emerald-400">{t('chooseSurah')}</h1>
+            <p className="text-gray-500 dark:text-slate-400">{t('chooseSurahSubtitle')}</p>
           </div>
 
           <div className="relative">
-            <Search className="absolute left-4 rtl:left-auto rtl:right-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-4 rtl:left-auto rtl:right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 w-5 h-5" />
             <input
               type="text"
               placeholder={t('searchPlaceholder')}
-              className="w-full pl-12 pr-4 rtl:pl-4 rtl:pr-12 py-4 bg-white border border-emerald-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none"
+              className="w-full pl-12 pr-4 rtl:pl-4 rtl:pr-12 py-4 bg-white dark:bg-slate-900 border border-emerald-100 dark:border-slate-800 text-gray-900 dark:text-slate-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -95,19 +95,19 @@ const SurahSelector: React.FC<SurahSelectorProps> = ({ onSelect }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSurahClick(surah)}
-                className="flex items-center p-4 bg-white border border-emerald-50 rounded-2xl hover:border-emerald-200 hover:shadow-md transition-all text-left rtl:text-right group"
+                className="flex items-center p-4 bg-white dark:bg-slate-900 border border-emerald-50 dark:border-slate-800/80 rounded-2xl hover:border-emerald-200 dark:hover:border-slate-700 hover:shadow-md transition-all text-left rtl:text-right group"
               >
-                <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-700 font-bold mr-4 rtl:mr-0 rtl:ml-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <div className="w-10 h-10 bg-emerald-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold mr-4 rtl:mr-0 rtl:ml-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                   {surah.number}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-emerald-900">
+                  <h3 className="font-bold text-emerald-900 dark:text-slate-100">
                     {language === 'ar' ? surah.name : surah.englishName}
                   </h3>
-                  <p className="text-xs text-gray-500">{surah.numberOfAyahs} {t('ayat')}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">{surah.numberOfAyahs} {t('ayat')}</p>
                 </div>
                 <div className="text-right rtl:text-left">
-                  <p className="font-arabic text-lg text-emerald-800">
+                  <p className="font-arabic text-lg text-emerald-800 dark:text-emerald-400">
                     {language === 'ar' ? surah.englishName : surah.name}
                   </p>
                 </div>
@@ -119,58 +119,58 @@ const SurahSelector: React.FC<SurahSelectorProps> = ({ onSelect }) => {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white p-8 rounded-3xl shadow-xl border border-emerald-50 space-y-8"
+          className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-emerald-50 dark:border-slate-800 space-y-8"
         >
           <div className="flex items-center justify-between">
             <button
               onClick={() => setSelectedSurah(null)}
-              className="text-emerald-600 font-medium hover:text-emerald-700 flex items-center gap-1"
+              className="text-emerald-600 dark:text-emerald-400 font-medium hover:text-emerald-700 flex items-center gap-1"
             >
               <ChevronRight className={`w-4 h-4 ${isRTL ? '' : 'rotate-180'}`} /> {t('backToList')}
             </button>
             <div className="text-right rtl:text-left">
-              <h2 className="text-2xl font-bold text-emerald-900">
+              <h2 className="text-2xl font-bold text-emerald-900 dark:text-slate-100">
                 {language === 'ar' ? selectedSurah.name : selectedSurah.englishName}
               </h2>
-              <p className="font-arabic text-xl text-emerald-600">
+              <p className="font-arabic text-xl text-emerald-600 dark:text-emerald-400">
                 {language === 'ar' ? selectedSurah.englishName : selectedSurah.name}
               </p>
             </div>
           </div>
 
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-emerald-600" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               {t('selectAyahRange')}
             </h3>
             
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">{t('fromAyah')}</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-slate-300">{t('fromAyah')}</label>
                 <input
                   type="number"
                   min={1}
                   max={selectedSurah.numberOfAyahs}
                   value={startAyah}
                   onChange={(e) => setStartAyah(Math.max(1, Math.min(selectedSurah.numberOfAyahs, parseInt(e.target.value) || 1)))}
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full p-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">{t('toAyah')}</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-slate-300">{t('toAyah')}</label>
                 <input
                   type="number"
                   min={startAyah}
                   max={selectedSurah.numberOfAyahs}
                   value={endAyah}
                   onChange={(e) => setEndAyah(Math.max(startAyah, Math.min(selectedSurah.numberOfAyahs, parseInt(e.target.value) || startAyah)))}
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full p-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
                 />
               </div>
             </div>
 
-            <div className="bg-emerald-50 p-4 rounded-2xl">
-              <p className="text-sm text-emerald-800">
+            <div className="bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/40">
+              <p className="text-sm text-emerald-800 dark:text-emerald-300">
                 {t('youWillPractice')} <strong>{endAyah - startAyah + 1}</strong> {t('ayatFrom')}{' '}
                 {language === 'ar' ? selectedSurah.name : selectedSurah.englishName}.
               </p>
@@ -178,7 +178,7 @@ const SurahSelector: React.FC<SurahSelectorProps> = ({ onSelect }) => {
 
             <button
               onClick={handleStart}
-              className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all"
+              className="w-full py-4 bg-emerald-600 dark:bg-emerald-500 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 dark:hover:bg-emerald-600 shadow-lg shadow-emerald-100 dark:shadow-none transition-all"
             >
               {t('startPractice')}
             </button>

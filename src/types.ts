@@ -26,6 +26,9 @@ export interface UserProfile {
   totalCorrect: number;
   totalMistakes: number;
   createdAt: string;
+  reminderEnabled?: boolean;
+  reminderTime?: string;
+  dailyGoal?: number;
 }
 
 export interface SessionRecord {
@@ -51,5 +54,24 @@ export interface AyahProgress {
   repetition?: number;
   easeFactor?: number;
   nextReview?: string;
+}
+
+export interface JournalEntry {
+  id?: string;
+  userId: string;
+  date: string;
+  content: string;
+  surahNumber?: number;
+  ayahRange?: string;
+  mood?: string;
+  createdAt: string;
+}
+
+export interface UserAchievement {
+  id?: string;
+  achievementId: string;
+  userId: string;
+  unlocked: boolean;
+  unlockedAt?: string;
 }
 

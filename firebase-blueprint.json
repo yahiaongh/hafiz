@@ -13,7 +13,10 @@
         "lastActive": { "type": "string", "format": "date-time" },
         "totalCorrect": { "type": "number" },
         "totalMistakes": { "type": "number" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "createdAt": { "type": "string", "format": "date-time" },
+        "reminderEnabled": { "type": "boolean" },
+        "reminderTime": { "type": "string" },
+        "dailyGoal": { "type": "number", "description": "Daily memorization Ayat goal" }
       },
       "required": ["uid", "email"]
     },
@@ -49,6 +52,33 @@
         "nextReview": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "surahNumber", "ayahNumber"]
+    },
+    "Journal": {
+      "title": "Journal Reflection",
+      "description": "Daily reflection or note about memorization sessions.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "date": { "type": "string" },
+        "content": { "type": "string" },
+        "surahNumber": { "type": "number" },
+        "ayahRange": { "type": "string" },
+        "mood": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "content", "createdAt"]
+    },
+    "Achievement": {
+      "title": "User Achievement Badge",
+      "description": "Unlocked milestones and badge achievements.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "achievementId": { "type": "string" },
+        "unlocked": { "type": "boolean" },
+        "unlockedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "achievementId", "unlocked"]
     }
   },
   "firestore": {
@@ -63,6 +93,14 @@
     "/users/{userId}/progress/{progressId}": {
       "schema": "Progress",
       "description": "Detailed progress per Ayah"
+    },
+    "/users/{userId}/journal/{journalId}": {
+      "schema": "Journal",
+      "description": "User memorization notes and daily reflections"
+    },
+    "/users/{userId}/achievements/{achievementId}": {
+      "schema": "Achievement",
+      "description": "User unlocked badges and milestone progress"
     }
   }
 }
